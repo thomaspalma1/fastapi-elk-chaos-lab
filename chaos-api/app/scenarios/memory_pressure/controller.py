@@ -1,12 +1,12 @@
 from fastapi import APIRouter
-from .model import MemoryPressureRequest, MemoryPressureResponse
-from .service import *
+from app.scenarios.memory_pressure.model import (
+    MemoryPressureRequest,
+    MemoryPressureResponse,
+)
+from app.scenarios.memory_pressure import service
 
+router = APIRouter(prefix="/simulate/memory-pressure", tags=["memory-pressure"])
 
-router = APIRouter(
-        prefix="/simulate/memory-pressure", 
-        tags=["memory-pressure"]
-        )
 
 @router.post("", response_model=MemoryPressureResponse)
 async def activate_memory_pressure(payload: MemoryPressureRequest):
@@ -17,10 +17,11 @@ async def activate_memory_pressure(payload: MemoryPressureRequest):
         duration_seconds=payload.duration_seconds,
     )
 
-@router.delete("")
+
+@router.delete("", response_model=MemoryPressureResponse)
 async def deactivate_memory_pressure():
     await service.deactivate()
-    return {
-            "scenario": service.SCENARIO_NAME, 
-            "status": "inactive"
-            }
+    return MemoryPressureResponse(
+        scenario=service.SCENARIO_NAME,
+        status="inactive",
+    )
