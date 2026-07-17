@@ -7,7 +7,7 @@ currently active and applies each of their effects.
 
 from app.scenarios.registry import APPLY_FUNCTIONS
 from app.shared import state
-from model import OrderResponse
+from .model import OrderResponse
 
 
 async def process_order() -> OrderResponse:
