@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.scenarios.memory_pressure.controller import router
+from app.shared.controller import router as status_router
 
 app = FastAPI(
     title="Observability chaos lab with FastAPI",
@@ -15,3 +16,4 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(status_router)
