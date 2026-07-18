@@ -5,15 +5,15 @@ from app.traffic.controller import router as traffic_router
 
 
 app = FastAPI(
-    title="Observability chaos lab with FastAPI",
+    title="Observability Chaos Lab with FastAPI",
+    summary="Chaos engineering API for generating observability scenarios.",
     version="0.1.0",
     description=(
-        "The application simulates a chaos orchestrator by generating different "
-        "scenarios and events that produce structured logs, which are then "
-        "collected and analyzed through the ELK Stack (Elasticsearch, Logstash, "
-        "and Kibana). Its purpose is to provide a controlled environment for "
-        "exploring log aggregation, search, visualization, and operational "
-        "monitoring."
+        "This application acts as a chaos orchestrator, generating various scenarios "
+        "and events that produce structured logs. These logs are collected and analyzed "
+        "using the ELK Stack (Elasticsearch, Logstash, and Kibana). The goal is to create "
+        "a controlled environment for exploring log aggregation, search, visualization, "
+        "and operational monitoring."
     ),
 )
 
