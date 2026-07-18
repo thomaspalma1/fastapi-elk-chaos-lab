@@ -25,7 +25,3 @@ jobs:
 
       - name: Install the project
         run: uv sync --locked --all-extras --dev
-
-
-#  windows-hell:
-#    runs-on: windows-latest
