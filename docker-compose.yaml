@@ -65,7 +65,6 @@ services:
     environment:
       - "LS_JAVA_OPTS=${LS_JAVA_OPTS}"
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - xpack.monitoring.enabled=false
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
       - ./logstash/config/logstash.yaml:/usr/share/logstash/config/logstash.yml:ro
