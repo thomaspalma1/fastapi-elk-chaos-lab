@@ -102,6 +102,7 @@ services:
     image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
     container_name: filebeat
     user: root
+    command: ["--strict.perms=false"]
     volumes:
       - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
