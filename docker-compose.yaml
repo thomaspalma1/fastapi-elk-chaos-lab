@@ -116,7 +116,7 @@ services:
 
   chaos-api:
     build:
-      context: ./chaos-api
+      context: .
       dockerfile: Dockerfile
     container_name: chaos-api
     ports:
