@@ -1,0 +1,22 @@
+{
+  "index_patterns": ["chaos-events-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "log_type": { "type": "keyword" },
+        "level": { "type": "keyword" },
+        "message": { "type": "text" },
+        "scenario": { "type": "keyword" },
+        "duration_seconds": { "type": "integer" },
+        "intensity": { "type": "float" },
+        "released_block_count": { "type": "integer" },
+        "processed_by": { "type": "keyword" }
+      }
+    }
+  }
+}
