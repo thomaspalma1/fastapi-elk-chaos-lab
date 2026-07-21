@@ -1,0 +1,21 @@
+{
+  "index_patterns": ["app-logs-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "log_type": { "type": "keyword" },
+        "level": { "type": "keyword" },
+        "message": { "type": "text" },
+        "scenario": { "type": "keyword" },
+        "memory_usage_delta_mb": { "type": "float" },
+        "total_allocated_blocks": { "type": "integer" },
+        "processed_by": { "type": "keyword" }
+      }
+    }
+  }
+}
