@@ -40,8 +40,10 @@ services:
       retries: 20
     restart: unless-stopped
 
-  # Runs once: sets the kibana_system password, since ELASTIC_PASSWORD only
-  # bootstraps the "elastic" superuser, not kibana_system.
+  # Runs once: sets the kibana_system password (ELASTIC_PASSWORD only
+  # bootstraps the "elastic" superuser, not kibana_system) and registers
+  # the index templates so app-logs-* and chaos-events-* indices get the
+  # correct field mappings as soon as the first document is indexed.
   setup:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     container_name: setup
@@ -51,13 +53,27 @@ services:
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+    volumes:
+      - ./elasticsearch/index-templates:/index-templates:ro
     networks:
       - elk
     command: >
-      curl -s -X POST -u elastic:${ELASTIC_PASSWORD}
-      -H "Content-Type: application/json"
-      http://elasticsearch:9200/_security/user/kibana_system/_password
-      -d "{\"password\":\"${KIBANA_SYSTEM_PASSWORD}\"}"
+      bash -c "
+        curl -s -X POST -u elastic:${ELASTIC_PASSWORD}
+          -H 'Content-Type: application/json'
+          http://elasticsearch:9200/_security/user/kibana_system/_password
+          -d '{\"password\":\"${KIBANA_SYSTEM_PASSWORD}\"}'
+        &&
+        curl -s -X PUT -u elastic:${ELASTIC_PASSWORD}
+          -H 'Content-Type: application/json'
+          http://elasticsearch:9200/_index_template/app-logs-template
+          --data-binary @/index-templates/app-logs-template.json
+        &&
+        curl -s -X PUT -u elastic:${ELASTIC_PASSWORD}
+          -H 'Content-Type: application/json'
+          http://elasticsearch:9200/_index_template/chaos-events-template
+          --data-binary @/index-templates/chaos-events-template.json
+      "
 
   logstash:
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
