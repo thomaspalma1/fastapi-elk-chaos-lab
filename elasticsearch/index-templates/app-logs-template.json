@@ -14,6 +14,8 @@
         "scenario": { "type": "keyword" },
         "memory_usage_delta_mb": { "type": "float" },
         "total_allocated_blocks": { "type": "integer" },
+        "db_query_time_ms": { "type": "float" },
+        "db_status": { "type": "keyword" },
         "processed_by": { "type": "keyword" }
       }
     }
