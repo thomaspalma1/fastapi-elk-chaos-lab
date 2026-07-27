@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.core.logging_config import configure_logging
 from app.scenarios.memory_pressure.controller import router
+from app.scenarios.db_timeout.controller import router as db_timeout_router
 from app.shared.controller import router as status_router
 from app.traffic.controller import router as traffic_router
 
@@ -20,5 +21,6 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(db_timeout_router)
 app.include_router(status_router)
 app.include_router(traffic_router)
