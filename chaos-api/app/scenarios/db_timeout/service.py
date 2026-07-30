@@ -2,7 +2,8 @@
 
 Simulates a database query that doesn't return within the expected
 time, by adding an artificial delay to a percentage of traffic requests
-while the scenario is active.
+while the scenario is active. The scenario is persistent: it stays
+active until explicitly deactivated.
 """
 
 import asyncio
@@ -17,13 +18,12 @@ MIN_DELAY_SECONDS = 2
 MAX_DELAY_SECONDS = 5
 
 
-async def activate(duration_seconds: int, intensity: float) -> None:
-    """Mark this scenario as active for the given duration and intensity."""
-    state.set_active(SCENARIO_NAME, duration_seconds, intensity)
+async def activate(intensity: float) -> None:
+    """Mark this scenario as active with the given intensity."""
+    state.set_active(SCENARIO_NAME, intensity)
     logger.bind(
         log_type="chaos-event",
         scenario=SCENARIO_NAME,
-        duration_seconds=duration_seconds,
         intensity=intensity,
     ).info("scenario_activated")
 
