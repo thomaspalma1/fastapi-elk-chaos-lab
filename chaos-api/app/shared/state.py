@@ -6,38 +6,31 @@ requests with no direct connection between them. Something needs to hold
 "which scenarios are active right now" so the traffic endpoints can check
 it before applying any chaos effect.
 
+Scenarios are persistent by design: once activated, a scenario stays
+active until explicitly deactivated via DELETE /simulate/{name}. There is
+no automatic expiration — this mirrors real incidents, which persist
+until someone intervenes, and avoids a scenario silently turning off
+mid-investigation.
+
 It intentionally knows nothing about individual scenarios (no memory
 pressure, no db timeout, etc.) — it only understands the generic concept
-of "a named scenario is active, with some intensity, until some time".
+of "a named scenario is active, with some intensity".
 """
 
-import time
-
-# Private module-level dict: holds the currently active scenarios in memory.
-# Not meant to be accessed directly from outside this module — always go
-# through set_active / remove_active / get_all_active so expiration and
-# access rules stay consistent in one place.
-_active_scenarios: dict[str, dict] = {}
+_active_scenarios: dict[str, float] = {}
 
 
-def set_active(name: str, duration_seconds: int, intensity: float) -> None:
-    """Register a scenario as active.
-
-    Stores the scenario's intensity and computes the timestamp at which
-    it should automatically expire.
+def set_active(name: str, intensity: float) -> None:
+    """Register a scenario as active, with the given intensity.
 
     Args:
-        name: Unique identifier of the scenario (e.g. "memory-pressure").
-        duration_seconds: How long the scenario should remain active.
+        name: Unique identifier of the scenario (e.g. "db-timeout").
         intensity: Percentage of requests affected, between 0.0 and 1.0.
 
     Returns:
         None.
     """
-    _active_scenarios[name] = {
-        "intensity": intensity,
-        "expires_at": time.time() + duration_seconds,
-    }
+    _active_scenarios[name] = intensity
 
 
 def remove_active(name: str) -> None:
@@ -58,15 +51,7 @@ def remove_active(name: str) -> None:
 def get_all_active() -> dict[str, float]:
     """Return all currently active scenarios.
 
-    Scenarios past their expiration time are removed as part of this
-    call, so every read of the state is guaranteed to be up to date.
-
     Returns:
-        A mapping of scenario name to intensity, containing only
-        scenarios that are still active.
+        A mapping of scenario name to intensity.
     """
-    now = time.time()
-    expired = [name for name, data in _active_scenarios.items() if data["expires_at"] <= now]
-    for name in expired:
-        del _active_scenarios[name]
-    return {name: data["intensity"] for name, data in _active_scenarios.items()}
+    return dict(_active_scenarios)
